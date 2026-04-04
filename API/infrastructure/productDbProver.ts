@@ -1,27 +1,27 @@
 import { Product } from "../domain/product";
 import { pool } from "./pool";
 
-const getAllProducts = async () =>{
+export const getAllProducts = async () =>{
     const result = await pool.query<Product>(
         `SELECT
-            id,
-            name,
-            price,
-            FROM products
-            ORDER BY id`
+             id,
+             name,
+             price
+         FROM public.products
+         ORDER BY id`
     )
 
     return result.rows;
 }
 
-const getProductById = async (id: number) => {
+export const getProductById = async (id: number) => {
     const result = await pool.query<Product>(
         `SELECT
-            id,
-            name,
-            price,
-            FROM products
-            WHERE id = $1`,
+             id,
+             name,
+             price
+         FROM public.products
+         WHERE id = $1`,
         [id]
     )
 

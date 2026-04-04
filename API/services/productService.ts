@@ -1,13 +1,25 @@
 import * as TE from "fp-ts/TaskEither"
 import * as O from "fp-ts/Option"
-import { db } from "../infrastructure/db"
-import { pipe } from "fp-ts/lib/function"
+import { pipe } from "fp-ts/function"
+import { getAllProducts, getProductById } from "../infrastructure/productDbProver"
 
-export const getAll = () => TE.right(db.products)
+export const getAll = () =>
+    TE.tryCatch(
+        () => getAllProducts(),
+        () => "Failed to get products"
+    )
 
 export const getById = (id: number) =>
     pipe(
-        db.products.find(p=> p.id === id),
-        O.fromNullable,
-        TE.fromOption(()=> "Product not found")
+        TE.tryCatch(
+            () => getProductById(id),
+            () => "Failed to get product"
+        ),
+        TE.chain((product) =>
+            pipe(
+                product,
+                O.fromNullable,
+                TE.fromOption(() => "Product not found")
+            )
+        )
     )
