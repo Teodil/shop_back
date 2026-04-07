@@ -1,29 +1,42 @@
 import * as TE from "fp-ts/TaskEither"
 import * as O from "fp-ts/Option"
-import { db } from "../infrastructure/db"
+import { db } from "../infrastructure/db/db"
 import { pipe } from "fp-ts/lib/function"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { User } from "../domain/user"
+import {withTransaction} from "../infrastructure/db/transaction";
+import {addUser, addUserVerifyCode} from "../infrastructure/db/userDbProvider";
+import {generateSecureCode} from "../utils/random";
 
 const SECRET = "very_secret"
 
-export const register = (username: string, password: string) =>
+export const register = (
+    username: string,
+    password: string,
+    email: string
+) =>
     pipe(
         TE.tryCatch(
             () => bcrypt.hash(password, 10),
             () => "HashError"
         ),
-        TE.map( (hashed): User => {
-            let hashedPassword = hashed as string
-            const user = {
-                id: Date.now(),
-                username,
-                password: hashedPassword
-            }
-            db.users.push(user);
-            return user
-        })
+        TE.chain((hashedPassword) =>
+            withTransaction(async (client) => {
+                const user = {
+                    username,
+                    password: hashedPassword,
+                    email,
+                    isVerified: false,
+                }
+
+                const result = await addUser(user, client)
+                const verifyCode = generateSecureCode()
+
+                await addUserVerifyCode(result.id, verifyCode, client)
+
+                return result.id
+            })
+        )
     )
 
 export const login = (username: string, password: string) =>

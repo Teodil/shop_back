@@ -1,6 +1,6 @@
-import { Cart } from "../domain/cart";
-import { Product } from "../domain/product";
-import { User } from "../domain/user";
+import { Cart } from "../../domain/cart";
+import { Product } from "../../domain/product";
+import { User } from "../../domain/user";
 
 export const db = {
     users: [

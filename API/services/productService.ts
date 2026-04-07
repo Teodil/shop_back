@@ -1,7 +1,7 @@
 import * as TE from "fp-ts/TaskEither"
 import * as O from "fp-ts/Option"
 import { pipe } from "fp-ts/function"
-import { getAllProducts, getProductById } from "../infrastructure/productDbProver"
+import { getAllProducts, getProductById } from "../infrastructure/db/productDbProvider"
 
 export const getAll = () =>
     TE.tryCatch(

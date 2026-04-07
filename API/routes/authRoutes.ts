@@ -27,13 +27,16 @@ export const authRouter = Router()
  *                          password:
  *                              type: string
  *                              example: 123456
+ *                          email:
+ *                              type: string
+ *                              example: test@mail.local
  *      responses:
  *          200:
  *              description: Пользователь создан
  */
 authRouter.post(
     "/register",
-    (req, res) => handler(res, register(req.body.username, req.body.password))
+    (req, res) => handler(res, register(req.body.username, req.body.password, req.body.email))
 )
 
 /**

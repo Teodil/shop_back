@@ -1,5 +1,5 @@
 import * as TE from "fp-ts/TaskEither"
-import { db } from "../infrastructure/db"
+import { db } from "../infrastructure/db/db"
 
 export const addProduct = (userId:number, productId: number) =>
     TE.right (
