@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken"
 import {withTransaction} from "../infrastructure/db/transaction";
 import {addUser, addUserVerifyCode} from "../infrastructure/db/userDbProvider";
 import {generateSecureCode} from "../utils/random";
+import {publishUserRegistered} from "../infrastructure/kafka/producer";
 
 const SECRET = "very_secret"
 
@@ -33,6 +34,11 @@ export const register = (
                 const verifyCode = generateSecureCode()
 
                 await addUserVerifyCode(result.id, verifyCode, client)
+                await publishUserRegistered({
+                    userId: result.id,
+                    email: user.email,
+                    code: verifyCode,
+                })
 
                 return result.id
             })

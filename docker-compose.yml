@@ -62,7 +62,7 @@ services:
     environment:
       PORT: 3000
       DATABASE_URL: postgresql://shop_user:shop_pass@db:5432/shop_db
-      KAFKA_URL: localhost:9092
+      KAFKA_URL: kafka:9092
     ports:
       - "3000:3000"
   
@@ -73,7 +73,7 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      KAFKA_URL: localhost:9092
+      KAFKA_URL: kafka:9092
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
